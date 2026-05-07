@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import SearchBar from './components/SearchBar.vue'
 import SearchResultList from './components/SearchResultList.vue'
 import LoaderPlaceholder from './components/LoaderPlaceholder.vue'
@@ -11,11 +11,14 @@ const isLoading = ref(false)
 const errorText = ref('')
 const openedResultId = ref(null)
 let debounceTimer = null
+let activeRequestId = 0
+const normalizedQuery = computed(() => searchText.value.trim())
 
 watch(searchText, (newValue) => {
   clearTimeout(debounceTimer)
   debounceTimer = setTimeout(async () => {
     const text = newValue.trim()
+    const requestId = ++activeRequestId
     errorText.value = ''
     openedResultId.value = null
     if (!text) {
@@ -24,12 +27,20 @@ watch(searchText, (newValue) => {
     }
     isLoading.value = true
     try {
-      searchResults.value = await doSearch(text)
+      const results = await doSearch(text)
+      if (requestId === activeRequestId) {
+        searchResults.value = results
+      }
     } catch {
-      searchResults.value = []
-      errorText.value = 'Could not load results'
+      if (requestId === activeRequestId) {
+        searchResults.value = []
+        errorText.value = 'Could not load results'
+      }
+    } finally {
+      if (requestId === activeRequestId) {
+        isLoading.value = false
+      }
     }
-    isLoading.value = false
   }, 350)
 })
 
@@ -48,14 +59,14 @@ function toggleResult(id) {
       <h1>Saras Finance  Search</h1>
       <SearchBar :model-value="searchText" @update:model-value="searchText = $event" />
       <p v-if="errorText" class="msg err">{{ errorText }}</p>
-      <p v-else-if="!searchText.trim()" class="msg">Type to search</p>
-      <p v-else-if="!isLoading && searchText.trim()" class="msg">
+      <p v-else-if="!normalizedQuery" class="msg">Type to search</p>
+      <p v-else-if="!isLoading && normalizedQuery" class="msg">
         Total results: {{ searchResults.length }}
       </p>
       <Transition name="fade" mode="out-in">
         <LoaderPlaceholder v-if="isLoading" key="loading" />
         <SearchResultList
-          v-else-if="searchText.trim()"
+          v-else-if="normalizedQuery"
           key="results"
           :items="searchResults"
           :open-id="openedResultId"

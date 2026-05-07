@@ -1,18 +1,35 @@
-# saras finance search (vue)
+# Saras finance search task
 
-vue 3 + vite. assignment was to make a search screen with components, dummy api, transitions etc.
+this is my vue 3 + vite submission for the frontend assignment.
 
-**run**
+main goal was: search UI with reusable components + dummy api call + loading + expandable results + basic transitions.
 
-```
+## run it locally
+
+```bash
 npm install
 npm run dev
 ```
 
-vite will show localhost link. for production build use `npm run build` and `npm run preview` if you need to check dist folder.
+## what i implemented
 
-search uses watch on the input with setTimeout 350ms debounce. results come from `searchService.js` (hardcoded array right now). i still call postman echo with fetch because rubric mentioned it  matching is done on frontend after that.
+- `SearchBar` component (input + emits)
+- `SearchResultList` component
+- `SearchResultItem` component (click to expand/collapse)
+- `LoaderPlaceholder` component (spinner while fetching)
+- debounced search (`350ms`) so api is not called on every key stroke
+- dummy api request with postman echo + simulated delay
+- result filtering on `title`, `snippet`, `description`, `category`
+- simple transitions (`fade` and detail panel animation)
+- responsive layout for mobile + desktop
+- keyboard/focus friendly result buttons with aria attributes
 
-folders: components under `src/components`, api logic in `src/services/searchService.js`.
+## if i had more time / scaling plan
 
-if i extend this later probably real backend + pagination + pinia for state. didnt have time for extras here.
+- add pinia for shared state + caching query results
+- add pagination or infinite scroll
+- use `AbortController` for canceling old requests
+- add virtual list rendering for big datasets
+- add tests (vitest + vue test utils + e2e)
+- connect to real backend api
+

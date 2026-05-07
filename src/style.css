@@ -115,6 +115,11 @@ h1 {
   cursor: pointer;
 }
 
+.head:focus-visible {
+  outline: 2px solid #2b5fd9;
+  outline-offset: -2px;
+}
+
 .title {
   font-size: 16px;
   margin-bottom: 5px;
@@ -132,6 +137,24 @@ h1 {
   border-radius: 999px;
   padding: 4px 9px;
   white-space: nowrap;
+}
+
+.head-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chevron {
+  color: #5d6d88;
+  font-size: 16px;
+  line-height: 1;
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
 }
 
 .details {
@@ -176,6 +199,17 @@ h1 {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-enter-active,
+  .fade-leave-active,
+  .panel-enter-active,
+  .panel-leave-active,
+  .chevron {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 @media (max-width: 640px) {

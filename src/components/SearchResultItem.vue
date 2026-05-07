@@ -19,16 +19,24 @@ const emit = defineEmits(['toggle'])
       class="head"
       type="button"
       :aria-expanded="open"
+      :aria-controls="`result-details-${item.id}`"
       @click="emit('toggle', item.id)"
     >
       <div>
         <h2 class="title">{{ item.title }}</h2>
         <p class="snip">{{ item.snippet }}</p>
       </div>
-      <span class="tag">{{ item.category }}</span>
+      <div class="head-right">
+        <span class="tag">{{ item.category }}</span>
+        <span class="chevron" :class="{ open }" aria-hidden="true">⌄</span>
+      </div>
     </button>
     <Transition name="panel">
-      <div v-show="open" class="details">
+      <div
+        v-show="open"
+        :id="`result-details-${item.id}`"
+        class="details"
+      >
         <p>{{ item.description }}</p>
         <dl class="meta">
           <div>
